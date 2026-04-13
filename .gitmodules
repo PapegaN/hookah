@@ -1,9 +1,9 @@
 [submodule "hookah-db"]
 	path = hookah-db
-	url = ./hookah-db
+	url = https://github.com/PapegaN/hookah-db.git
 [submodule "hookah-web"]
 	path = hookah-web
-	url = ./hookah-web
+	url = https://github.com/PapegaN/hookah-web.git
 [submodule "hookah-api"]
 	path = hookah-api
-	url = ./hookah-api
+	url = https://github.com/PapegaN/hookah-api.git
