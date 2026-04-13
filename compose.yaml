@@ -1,0 +1,62 @@
+services:
+  db:
+    build:
+      context: ./hookah-db
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-hookah}
+      POSTGRES_USER: ${POSTGRES_USER:-hookah}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-hookah_local}
+    ports:
+      - '${POSTGRES_PORT:-5432}:5432'
+    volumes:
+      - hookah-postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test:
+        [
+          'CMD-SHELL',
+          'pg_isready -U ${POSTGRES_USER:-hookah} -d ${POSTGRES_DB:-hookah}',
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build:
+      context: ./hookah-api
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      PORT: 3000
+      APP_ORIGIN: http://localhost:${WEB_PORT:-8080}
+      DATABASE_URL: postgresql://${POSTGRES_USER:-hookah}:${POSTGRES_PASSWORD:-hookah_local}@db:5432/${POSTGRES_DB:-hookah}
+    ports:
+      - '${API_PORT:-3000}:3000'
+    healthcheck:
+      test:
+        [
+          'CMD-SHELL',
+          'node -e "fetch(''http://127.0.0.1:3000/api/v1/health'').then((response) => process.exit(response.ok ? 0 : 1)).catch(() => process.exit(1))"',
+        ]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+
+  web:
+    build:
+      context: ./hookah-web
+      args:
+        VITE_API_BASE_URL: /api/v1
+    depends_on:
+      api:
+        condition: service_healthy
+    ports:
+      - '${WEB_PORT:-8080}:80'
+    healthcheck:
+      test: ['CMD-SHELL', 'wget -q -O /dev/null http://127.0.0.1/ || exit 1']
+      interval: 15s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  hookah-postgres-data:

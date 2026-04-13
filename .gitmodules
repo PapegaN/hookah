@@ -1,0 +1,9 @@
+[submodule "hookah-db"]
+	path = hookah-db
+	url = ./hookah-db
+[submodule "hookah-web"]
+	path = hookah-web
+	url = ./hookah-web
+[submodule "hookah-api"]
+	path = hookah-api
+	url = ./hookah-api
