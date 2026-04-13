@@ -20,12 +20,28 @@ services:
       timeout: 5s
       retries: 5
 
+  db-migrate:
+    build:
+      context: ./hookah-db
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      POSTGRES_HOST: db
+      POSTGRES_DB: ${POSTGRES_DB:-hookah}
+      POSTGRES_USER: ${POSTGRES_USER:-hookah}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-hookah_local}
+    command: ["/opt/hookah-db/docker/run-migrations.sh"]
+    restart: "no"
+
   api:
     build:
       context: ./hookah-api
     depends_on:
       db:
         condition: service_healthy
+      db-migrate:
+        condition: service_completed_successfully
     environment:
       PORT: 3000
       APP_ORIGIN: http://localhost:${WEB_PORT:-8080}
