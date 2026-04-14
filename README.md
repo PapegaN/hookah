@@ -27,12 +27,15 @@ docker compose up --build
 - backend health: `http://localhost:3000/api/v1/health`
 - swagger: `http://localhost:3000/api/docs`
 - postgres: `localhost:5432`
+- minio api: `http://localhost:9000`
+- minio console: `http://localhost:9001`
 
 ## Что важно сейчас
 
 - `api` работает поверх реальной PostgreSQL-схемы, а не in-memory demo store.
 - В `compose` есть сервис `db-migrate`, который применяет миграции и сиды при каждом запуске стека даже на существующем volume.
 - В админке есть страница настроек с экспортом справочников, пользователей, заказов и полным backup/import.
+- В `compose` добавлен `MinIO`, а в админке есть черновой media upload flow через presigned URL.
 
 ## Запуск частей по отдельности
 
