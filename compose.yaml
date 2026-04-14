@@ -62,7 +62,7 @@ services:
       OBJECT_STORAGE_SECRET_KEY: ${OBJECT_STORAGE_SECRET_KEY:-hookah_media_local}
       OBJECT_STORAGE_BUCKET_HOOKAH_MEDIA: ${OBJECT_STORAGE_BUCKET_HOOKAH_MEDIA:-hookah-media}
     volumes:
-      - ./docker/minio/cors.json:/config/cors.json:ro
+      - ./docker/minio/cors.xml:/config/cors.xml:ro
     entrypoint:
       - /bin/sh
       - -c
@@ -70,7 +70,7 @@ services:
         mc alias set hookah "$${OBJECT_STORAGE_ENDPOINT}" "$${OBJECT_STORAGE_ACCESS_KEY}" "$${OBJECT_STORAGE_SECRET_KEY}" \
         && mc mb --ignore-existing "hookah/$${OBJECT_STORAGE_BUCKET_HOOKAH_MEDIA}" \
         && mc anonymous set public "hookah/$${OBJECT_STORAGE_BUCKET_HOOKAH_MEDIA}" \
-        && mc cors set "hookah/$${OBJECT_STORAGE_BUCKET_HOOKAH_MEDIA}" /config/cors.json
+        && mc cors set "hookah/$${OBJECT_STORAGE_BUCKET_HOOKAH_MEDIA}" /config/cors.xml
     restart: "no"
 
   api:
